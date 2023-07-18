@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Téléchargement d'image</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Télécharger une image</h1>
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <input type="submit" value="Télécharger">
+    </form>
+
+    <div id="image-container"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Lorsque le formulaire est soumis
+            $('#upload-form').on('submit', function(event) {
+                event.preventDefault();
+                
+                var formData = new FormData($(this)[0]);
+
+                // Envoyer le formulaire au serveur Flask
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Réponse du serveur Flask
+                        console.log(response);
+                        displayImage(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // En cas d'erreur
+                        console.error(error);
+                    }
+                });
+            });
+
+            // Fonction pour afficher l'image
+            function displayImage(imageLink) {
+                var imageTag = $('<img>').attr('src', imageLink);
+                $('#image-container').html(imageTag);
+            }
+        });
+    </script>
+</body>
+</html>
